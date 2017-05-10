@@ -44,8 +44,8 @@ class Ram {
     this.PC++
   }
 
-  STORE(i) {
-    this.S[i] = this.ACC
+  LOADIN(i) {
+    this.ACC = this.S[this.S[i]]
     this.PC++
   }
 
@@ -54,9 +54,31 @@ class Ram {
     this.PC++
   }
 
+  STORE(i) {
+    this.S[i] = this.ACC
+    this.PC++
+  }
+
+  STOREIN(i) {
+    this.S[this.S[i]] = this.ACC
+    this.PC++
+  }
+
   JUMP(pc, condition = null) {
     if(condition == null || this.ACC == condition) return this.PC = pc
     return ++this.PC
+  }
+
+  SUB(i) {
+    this.ACC -= this.S[i]
+    if (this.ACC < 0) this.ACC = 0
+    this.PC++
+  }
+
+  SUBI(i) {
+    this.ACC -= i
+    if (this.ACC < 0) this.ACC = 0
+    this.PC++
   }
 
   ADD(i) {
@@ -144,6 +166,22 @@ module.exports = class Simulator {
     })
   }
 
+  STOREIN(i) {
+    this.program.push({
+      PC: this._pc++,
+      CMD: "STOREIN",
+      args: [i]
+    })
+  }
+
+  LOADIN(i) {
+    this.program.push({
+      PC: this._pc++,
+      CMD: "LOADIN",
+      args: [i]
+    })
+  }
+
   LOAD(i) {
     this.program.push({
       PC: this._pc++,
@@ -157,6 +195,22 @@ module.exports = class Simulator {
       PC: this._pc++,
       CMD: "JUMP",
       args: [pc, condition]
+    })
+  }
+
+  SUB(i) {
+    this.program.push({
+      PC: this._pc++,
+      CMD: "SUB",
+      args: [i]
+    })
+  }
+
+  SUBI(i) {
+    this.program.push({
+      PC: this._pc++,
+      CMD: "SUBI",
+      args: [i]
     })
   }
 
